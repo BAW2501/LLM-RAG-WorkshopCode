@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Interactive Linear Regression</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+  <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+  <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    h2 { font-size: 1.5em; }
+  </style>
+</head>
+<body>
+  <div id="root" class="container"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } = Recharts;
+
+    const LinearRegressionDemo = () => {
+      const houseData = [
+        { size: 50, price: 500000 }, { size: 75, price: 750000 },
+        { size: 100, price: 900000 }, { size: 125, price: 1200000 },
+        { size: 150, price: 1400000 }, { size: 60, price: 600000 },
+        { size: 85, price: 800000 }, { size: 110, price: 1000000 },
+        { size: 130, price: 1100000 }, { size: 140, price: 1300000 },
+      ];
+
+      const [slope, setSlope] = useState(10000);
+      const [intercept, setIntercept] = useState(0);
+      const [totalError, setTotalError] = useState(0);
+      const [showErrors, setShowErrors] = useState(false);
+
+      const getPredictionLine = () => {
+        const minSize = Math.min(...houseData.map(d => d.size));
+        const maxSize = Math.max(...houseData.map(d => d.size));
+        return [{ size: minSize, price: minSize * slope + intercept }, { size: maxSize, price: maxSize * slope + intercept }];
+      };
+
+      useEffect(() => {
+        const error = _.sum(houseData.map(point => {
+          const predicted = point.size * slope + intercept;
+          return Math.abs(predicted - point.price);
+        }));
+        setTotalError(error);
+      }, [slope, intercept]);
+
+      const getErrorLines = () => {
+        return houseData.map(point => {
+          const predicted = point.size * slope + intercept;
+          return { ...point, predictedPrice: predicted, error: Math.abs(predicted - point.price) };
+        });
+      };
+
+      return (
+        <div className="w-full max-w-4xl p-4">
+      <div className="mb-6">
+        <h2 className="text-xl font-bold mb-4">Interactive Linear Regression</h2>
+        <div className="flex gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Price per m² (Slope)
+            </label>
+            <input
+              type="range"
+              min="5000"
+              max="15000"
+              step="100"
+              value={slope}
+              onChange={(e) => setSlope(Number(e.target.value))}
+              className="w-full"
+            />
+            <span className="text-sm">{slope.toLocaleString()} DZD/m²</span>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Base Price (Intercept)
+            </label>
+            <input
+              type="range"
+              min="-200000"
+              max="200000"
+              step="10000"
+              value={intercept}
+              onChange={(e) => setIntercept(Number(e.target.value))}
+              className="w-full"
+            />
+            <span className="text-sm">{intercept.toLocaleString()} DZD</span>
+          </div>
+        </div>
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={() => setShowErrors(!showErrors)}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            {showErrors ? 'Hide Errors' : 'Show Errors'}
+          </button>
+          <div className="text-sm">
+            Total Error: {totalError.toLocaleString()} DZD
+          </div>
+        </div>
+      </div>
+      
+      <div className="h-96">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+            <CartesianGrid />
+            <XAxis 
+              dataKey="size" 
+              type="number" 
+              domain={[0, 200]}
+              label={{ value: 'House Size (m²)', position: 'bottom' }}
+            />
+            <YAxis 
+              domain={[0, 2000000]}
+              tickFormatter={(value) => `${(value/1000000).toFixed(1)}M`}
+              label={{ value: 'Price (DZD)', angle: -90, position: 'left' }}
+            />
+            <Tooltip 
+              formatter={(value) => `${value.toLocaleString()} DZD`}
+              labelFormatter={(value) => `${value} m²`}
+            />
+            
+            {/* Scatter plot of actual data */}
+            <Line
+              data={houseData}
+              type="scatter"
+              dataKey="price"
+              stroke="none"
+              fill="#2563eb"
+              dot={{ r: 4 }}
+              isAnimationActive={false}
+              name="Actual Price"
+            />
+            
+            {/* Prediction line */}
+            <Line
+              data={getPredictionLine()}
+              type="linear"
+              dataKey="price"
+              stroke="#dc2626"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+              name="Prediction Line"
+            />
+
+            {/* Error lines */}
+            {showErrors && getErrorLines().map((point, index) => (
+              <ReferenceLine
+                key={index}
+                segment={[
+                  { x: point.size, y: point.price },
+                  { x: point.size, y: point.predictedPrice }
+                ]}
+                stroke="#9ca3af"
+                strokeDasharray="3 3"
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>      );
+    };
+
+    ReactDOM.render(<LinearRegressionDemo />, document.getElementById('root'));
+  </script>
+</body>
+</html>

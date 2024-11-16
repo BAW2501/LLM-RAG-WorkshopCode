@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Form Statistics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h2 {
+        font-size: 1.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="container"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+      const {
+        BarChart,
+        Bar,
+        XAxis,
+        YAxis,
+        CartesianGrid,
+        Tooltip,
+        Legend,
+        ResponsiveContainer,
+        PieChart,
+        Pie,
+        Cell,
+      } = Recharts;
+
+      const COLORS = [
+        "#0088FE",
+        "#00C49F",
+        "#FFBB28",
+        "#FF8042",
+        "#8884d8",
+        "#82ca9d",
+      ];
+
+      const WorkshopAnalysis = () => {
+        const yearData = [
+          { name: "M1", value: 5 },
+          { name: "L3", value: 4 },
+          { name: "L2", value: 10 },
+          { name: "M2", value: 2 },
+          { name: "L1", value: 2 },
+        ];
+
+        const languageData = [
+          { name: "English", value: 10 },
+          { name: "Darija + English", value: 11 },
+          { name: "French", value: 2 },
+        ];
+
+        const experienceData = [
+          { name: "High", value: 6 },
+          { name: "Moderate", value: 3 },
+          { name: "Minimal", value: 4 },
+          { name: "Theory Only", value: 4 },
+        ];
+
+        const topicsData = [
+          { name: "LLM Basics", value: 19 },
+          { name: "Information Retrieval", value: 11 },
+          { name: "RAG Coding", value: 10 },
+          { name: "RAG Applications", value: 14 },
+        ];
+
+        const learningStyleData = [
+          { name: "Lectures", value: 10 },
+          { name: "Hands-on Coding", value: 15 },
+          { name: "Step-by-step Examples", value: 21 },
+          { name: "Q&A Sessions", value: 9 },
+        ];
+
+        return (
+          <div className="space-y-8 p-4">
+            <h2 className="text-2xl font-bold mb-4">
+              Workshop Questionnaire Analysis
+            </h2>
+
+            <div className="space-y-4">
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h3 className="text-xl font-semibold mb-2">
+                  Student Year Distribution
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={yearData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#0088FE" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h3 className="text-xl font-semibold mb-2">
+                    Language Preference
+                  </h3>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={languageData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={({ name, percent }) =>
+                            `${name} (${(percent * 100).toFixed(0)}%)`
+                          }
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {languageData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="bg-white p-4 rounded-lg shadow">
+                  <h3 className="text-xl font-semibold mb-2">
+                    Desired Experience Level
+                  </h3>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={experienceData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={true}
+                          label={({ name, percent }) =>
+                            `${name} (${(percent * 100).toFixed(0)}%)`
+                          }
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {experienceData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h3 className="text-xl font-semibold mb-2">Requested Topics</h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={topicsData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#00C49F" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-lg shadow">
+                <h3 className="text-xl font-semibold mb-2">
+                  Preferred Learning Styles
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={learningStyleData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#FFBB28" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+      ReactDOM.render(<WorkshopAnalysis />, document.getElementById("root"));
+    </script>
+  </body>
+</html>

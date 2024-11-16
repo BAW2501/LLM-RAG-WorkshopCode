@@ -35,8 +35,8 @@ This repository contains an educational implementation of a Retrieval-Augmented 
 
 1. Clone this repository:
 ```bash
-git clone [repository-url]
-cd [repository-name]
+git clone https://github.com/BAW2501/LLM-RAG-WorkshopCode.git
+cd LLM-RAG-WorkshopCode
 ```
 
 2. Install required packages:
@@ -72,6 +72,7 @@ python TkinterRAG.py
 ├── ConsoleBasedRag.py    # Console-based implementation
 ├── TkinterRAG.py         # RAG GUI implementation
 └── TkinterLLM.py         # LLM GUI implementation 
+└── Visualizations        # Folder for visualisation content 
 ```
 
 ### Key Components
