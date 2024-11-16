@@ -111,9 +111,11 @@ These simplifications make the code more accessible for learning but should be e
 ## 📚 Learning Resources
 
 To learn more about RAG systems and LLMs:
+- [3B1B Playlist On AI](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+- [Hands on LLM Book](https://www.goodreads.com/book/show/210408850-hands-on-large-language-models)
 - [What is RAG?](https://www.pinecone.io/learn/retrieval-augmented-generation/)
-- [Ollama Documentation](https://ollama.ai/docs)
-- [LangChain RAG Tutorial](https://python.langchain.com/docs/use_cases/question_answering/)
+- [RAG Explained in 8 Minutes](https://www.youtube.com/watch?v=HREbdmOSQ18)
+- [LangChain RAG Tutorial](https://python.langchain.com/docs/tutorials/rag/)
 
 ## ⚖️ License
 
