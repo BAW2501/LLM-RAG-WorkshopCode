@@ -1,0 +1,4 @@
+numpy
+ollama
+ollama-gui
+pymupdf
